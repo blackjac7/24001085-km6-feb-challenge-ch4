@@ -1,4 +1,9 @@
 const { Car_specs } = require("../../models");
+const {
+    getFromCache,
+    saveToCache,
+    removeFromCache,
+} = require("../../helpers/redis");
 
 exports.getAllCarSpecs = async () => {
     const data = await Car_specs.findAll();
@@ -11,9 +16,14 @@ exports.getAllCarSpecs = async () => {
 };
 
 exports.getCarSpecById = async (id) => {
-    console.log(id);
+    const key = `car_spec:${id}`;
+    const cache = await getFromCache(key);
+
+    if (cache) {
+        return cache;
+    }
+
     const data = await Car_specs.findByPk(id);
-    console.log(data);
 
     if (!data) {
         throw {
@@ -21,6 +31,8 @@ exports.getCarSpecById = async (id) => {
             message: `Car_spec with id ${id} not found`,
         };
     }
+
+    await saveToCache(key, data, 300);
 
     return data;
 };
@@ -38,6 +50,9 @@ exports.getCarSpecBySpecId = async (car_id, spec_id) => {
 exports.createCarSpec = async (carSpec) => {
     const data = await Car_specs.create(carSpec);
 
+    const key = `car_spec:${data.id}`;
+    await saveToCache(key, data, 300);
+
     return data;
 };
 
@@ -49,6 +64,11 @@ exports.updateCarSpec = async (id, carSpec) => {
 
     const data = await Car_specs.update(carSpec, opt);
 
+    if (data[0] === 1) {
+        const key = `car_spec:${id}`;
+        await saveToCache(key, data[1][0], 300);
+    }
+
     return data[1][0];
 };
 
@@ -58,6 +78,9 @@ exports.deleteCarSpec = async (id) => {
     };
 
     const data = await Car_specs.destroy(opt);
+
+    const key = `car_spec:${id}`;
+    await removeFromCache(key);
 
     return data;
 };

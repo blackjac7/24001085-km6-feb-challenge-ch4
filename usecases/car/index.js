@@ -34,7 +34,7 @@ exports.createCar = async (payload) => {
         };
     }
 
-    const data = await carRepo.createCar(car);
+    const data = await carRepo.createCar(payload);
 
     return data;
 };
@@ -42,15 +42,17 @@ exports.createCar = async (payload) => {
 exports.updateCar = async (id, payload) => {
     await carRepo.getCarById(id);
 
-    const existingCar = await carRepo.getCarByPlate(payload.plate);
-    if (existingCar && existingCar.id !== id) {
-        throw {
-            statusCode: 400,
-            message: "A car with this plate already exists",
-        };
+    if (payload.plate) {
+        const existingCar = await carRepo.getCarByPlate(payload.plate);
+        if (existingCar && existingCar.id !== id) {
+            throw {
+                statusCode: 400,
+                message: "A car with this plate already exists",
+            };
+        }
     }
 
-    const data = await carRepo.updateCar(id, car);
+    const data = await carRepo.updateCar(id, payload);
 
     return data;
 };

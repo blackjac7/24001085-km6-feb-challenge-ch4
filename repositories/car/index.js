@@ -1,4 +1,9 @@
 const { Car } = require("../../models");
+const {
+    getFromCache,
+    saveToCache,
+    removeFromCache,
+} = require("../../helpers/redis");
 
 exports.getAllCars = async () => {
     const opt = {
@@ -15,9 +20,7 @@ exports.getAllCars = async () => {
 };
 
 exports.getAllCarOptions = async (id) => {
-    console.log("id", id);
     const car = await Car.findByPk(id);
-    console.log(car);
 
     if (!car) {
         throw {
@@ -55,6 +58,13 @@ exports.getAllCarSpecs = async (id) => {
 };
 
 exports.getCarById = async (id) => {
+    const key = `car:${id}`;
+    const cache = await getFromCache(key);
+
+    if (cache) {
+        return cache;
+    }
+
     const opt = {
         include: ["options", "specs"],
     };
@@ -64,6 +74,8 @@ exports.getCarById = async (id) => {
     if (!data) {
         throw { statusCode: 404, message: `Car with id ${id} not found` };
     }
+
+    await saveToCache(key, data, 300);
 
     return data;
 };
@@ -81,6 +93,9 @@ exports.getCarByPlate = async (plate) => {
 exports.createCar = async (payload) => {
     const data = await Car.create(payload);
 
+    const key = `car:${data.id}`;
+    await saveToCache(key, data, 300);
+
     return data;
 };
 
@@ -92,6 +107,11 @@ exports.updateCar = async (id, payload) => {
 
     const data = await Car.update(payload, opt);
 
+    if (data[0] === 1) {
+        const key = `car:${id}`;
+        await saveToCache(key, data[1][0], 300);
+    }
+
     return data[1][0];
 };
 
@@ -101,6 +121,9 @@ exports.deleteCar = async (id) => {
     };
 
     const data = await Car.destroy(opt);
+
+    const key = `car:${id}`;
+    await removeFromCache(key);
 
     return data;
 };

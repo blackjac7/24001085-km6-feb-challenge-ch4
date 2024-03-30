@@ -1,4 +1,9 @@
 const { Spec } = require("../../models");
+const {
+    getFromCache,
+    saveToCache,
+    removeFromCache,
+} = require("../../helpers/redis");
 
 exports.getAllSpecs = async () => {
     const data = await Spec.findAll();
@@ -11,6 +16,13 @@ exports.getAllSpecs = async () => {
 };
 
 exports.getSpecById = async (id) => {
+    const key = `spec:${id}`;
+    const cache = await getFromCache(key);
+
+    if (cache) {
+        return cache;
+    }
+
     const opt = {
         include: ["cars"],
     };
@@ -20,6 +32,8 @@ exports.getSpecById = async (id) => {
     if (!data) {
         throw { statusCode: 404, message: `Spec with id ${id} not found` };
     }
+
+    await saveToCache(key, data, 300);
 
     return data;
 };
@@ -37,6 +51,9 @@ exports.getSpecByName = async (name) => {
 exports.createSpec = async (payload) => {
     const data = await Spec.create(payload);
 
+    const key = `spec:${data.id}`;
+    await saveToCache(key, data, 300);
+
     return data;
 };
 
@@ -48,6 +65,11 @@ exports.updateSpec = async (id, payload) => {
 
     const data = await Spec.update(payload, opt);
 
+    if (data[0] === 1) {
+        const key = `spec:${id}`;
+        await saveToCache(key, data[1][0], 300);
+    }
+
     return data[1][0];
 };
 
@@ -57,6 +79,9 @@ exports.deleteSpec = async (id) => {
     };
 
     const data = await Spec.destroy(opt);
+
+    const key = `spec:${id}`;
+    await removeFromCache(key);
 
     return data;
 };
