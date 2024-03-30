@@ -9,15 +9,16 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            Option.belongsTo(models.Car, {
-                foreignKey: "car_id",
+            Option.belongsToMany(models.Car, {
+                through: "Car_options",
+                foreignKey: "option_id",
+                as: "cars",
             });
         }
     }
     Option.init(
         {
             name: DataTypes.STRING,
-            car_id: DataTypes.INTEGER,
             deletedAt: DataTypes.DATE,
         },
         {

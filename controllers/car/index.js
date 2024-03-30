@@ -29,14 +29,6 @@ exports.getCarById = async (req, res) => {
 
 exports.createCar = async (req, res) => {
     try {
-        const existingCar = await carUsecase.getCarByPlate(req.body.plate);
-        if (existingCar) {
-            throw {
-                statusCode: 400,
-                message: "A car with this plate already exists",
-            };
-        }
-
         const data = await carUsecase.createCar(req.body);
 
         res.status(201).json({

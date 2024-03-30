@@ -1,11 +1,11 @@
 const { Car } = require("../../models");
 
 exports.getAllCars = async () => {
-    // const opt = {
-    //     include: ["options", "specs"],
-    // };
+    const opt = {
+        include: ["options", "specs"],
+    };
 
-    const data = await Car.findAll();
+    const data = await Car.findAll(opt);
 
     if (!data || data.length === 0) {
         throw { statusCode: 404, message: "No cars found" };
@@ -16,11 +16,10 @@ exports.getAllCars = async () => {
 
 exports.getCarById = async (id) => {
     const opt = {
-        where: { id },
         include: ["options", "specs"],
     };
 
-    const data = await Car.findOne(opt);
+    const data = await Car.findByPk(id, opt);
 
     if (!data) {
         throw { statusCode: 404, message: `Car with id ${id} not found` };
@@ -32,7 +31,6 @@ exports.getCarById = async (id) => {
 exports.getCarByPlate = async (plate) => {
     const opt = {
         where: { plate },
-        include: ["options", "specs"],
     };
 
     const data = await Car.findOne(opt);
@@ -54,10 +52,6 @@ exports.updateCar = async (id, car) => {
 
     const data = await Car.update(car, opt);
 
-    if (data[0] === 0) {
-        throw { statusCode: 404, message: `Car with id ${id} not found` };
-    }
-
     return data[1][0];
 };
 
@@ -67,10 +61,6 @@ exports.deleteCar = async (id) => {
     };
 
     const data = await Car.destroy(opt);
-
-    if (data === 0) {
-        throw { statusCode: 404, message: `Car with id ${id} not found` };
-    }
 
     return data;
 };

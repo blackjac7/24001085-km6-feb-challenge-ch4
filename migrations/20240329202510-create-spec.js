@@ -11,14 +11,7 @@ module.exports = {
             },
             name: {
                 type: Sequelize.STRING,
-                allowNull: false,
-            },
-            car_id: {
-                type: Sequelize.INTEGER,
-                references: {
-                    model: "Cars",
-                    key: "id",
-                },
+                unique: true,
                 allowNull: false,
             },
             createdAt: {
