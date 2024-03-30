@@ -1,6 +1,6 @@
 const optionUsecase = require("../../usecases/option");
 
-exports.getAllOptions = async (req, res) => {
+exports.getAllOptions = async (req, res, next) => {
     try {
         const data = await optionUsecase.getAllOptions();
 
@@ -9,11 +9,11 @@ exports.getAllOptions = async (req, res) => {
             data,
         });
     } catch (error) {
-        res.status(500).json(error);
+        next(error);
     }
 };
 
-exports.getOptionById = async (req, res) => {
+exports.getOptionById = async (req, res, next) => {
     try {
         const { id } = req.params;
         const data = await optionUsecase.getOptionById(id);
@@ -23,11 +23,11 @@ exports.getOptionById = async (req, res) => {
             data,
         });
     } catch (error) {
-        res.status(500).json(error);
+        next(error);
     }
 };
 
-exports.createOption = async (req, res) => {
+exports.createOption = async (req, res, next) => {
     try {
         const data = await optionUsecase.createOption(req.body);
 
@@ -36,11 +36,11 @@ exports.createOption = async (req, res) => {
             data,
         });
     } catch (error) {
-        res.status(500).json(error);
+        next(error);
     }
 };
 
-exports.updateOption = async (req, res) => {
+exports.updateOption = async (req, res, next) => {
     try {
         const { id } = req.params;
         const data = await optionUsecase.updateOption(id, req.body);
@@ -50,11 +50,11 @@ exports.updateOption = async (req, res) => {
             data,
         });
     } catch (error) {
-        res.status(500).json(error);
+        next(error);
     }
 };
 
-exports.deleteOption = async (req, res) => {
+exports.deleteOption = async (req, res, next) => {
     try {
         const { id } = req.params;
         await optionUsecase.deleteOption(id);
@@ -63,6 +63,6 @@ exports.deleteOption = async (req, res) => {
             message: "Option deleted successfully",
         });
     } catch (error) {
-        res.status(500).json(error);
+        next(error);
     }
 };

@@ -1,6 +1,6 @@
 const specUsecase = require("../../usecases/spec");
 
-exports.getAllSpecs = async (req, res) => {
+exports.getAllSpecs = async (req, res, next) => {
     try {
         const data = await specUsecase.getAllSpecs();
 
@@ -9,11 +9,11 @@ exports.getAllSpecs = async (req, res) => {
             data,
         });
     } catch (error) {
-        res.status(500).json(error);
+        next(error);
     }
 };
 
-exports.getSpecById = async (req, res) => {
+exports.getSpecById = async (req, res, next) => {
     try {
         const { id } = req.params;
         const data = await specUsecase.getSpecById(id);
@@ -23,11 +23,11 @@ exports.getSpecById = async (req, res) => {
             data,
         });
     } catch (error) {
-        res.status(500).json(error);
+        next(error);
     }
 };
 
-exports.createSpec = async (req, res) => {
+exports.createSpec = async (req, res, next) => {
     try {
         const data = await specUsecase.createSpec(req.body);
 
@@ -36,11 +36,11 @@ exports.createSpec = async (req, res) => {
             data,
         });
     } catch (error) {
-        res.status(500).json(error);
+        next(error);
     }
 };
 
-exports.updateSpec = async (req, res) => {
+exports.updateSpec = async (req, res, next) => {
     try {
         const { id } = req.params;
         const data = await specUsecase.updateSpec(id, req.body);
@@ -50,11 +50,11 @@ exports.updateSpec = async (req, res) => {
             data,
         });
     } catch (error) {
-        res.status(500).json(error);
+        next(error);
     }
 };
 
-exports.deleteSpec = async (req, res) => {
+exports.deleteSpec = async (req, res, next) => {
     try {
         const { id } = req.params;
         await specUsecase.deleteSpec(id);
@@ -63,6 +63,6 @@ exports.deleteSpec = async (req, res) => {
             message: "Spec deleted successfully",
         });
     } catch (error) {
-        res.status(500).json(error);
+        next(error);
     }
 };

@@ -34,19 +34,19 @@ exports.getOptionByName = async (name) => {
     return data;
 };
 
-exports.createOption = async (option) => {
-    const data = await Option.create(option);
+exports.createOption = async (payload) => {
+    const data = await Option.create(payload);
 
     return data;
 };
 
-exports.updateOption = async (id, option) => {
+exports.updateOption = async (id, payload) => {
     const opt = {
         where: { id },
         returning: true,
     };
 
-    const data = await Option.update(option, opt);
+    const data = await Option.update(payload, opt);
 
     return data[1][0];
 };

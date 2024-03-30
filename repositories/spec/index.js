@@ -34,19 +34,19 @@ exports.getSpecByName = async (name) => {
     return data;
 };
 
-exports.createSpec = async (spec) => {
-    const data = await Spec.create(spec);
+exports.createSpec = async (payload) => {
+    const data = await Spec.create(payload);
 
     return data;
 };
 
-exports.updateSpec = async (id, spec) => {
+exports.updateSpec = async (id, payload) => {
     const opt = {
         where: { id },
         returning: true,
     };
 
-    const data = await Spec.update(spec, opt);
+    const data = await Spec.update(payload, opt);
 
     return data[1][0];
 };

@@ -12,8 +12,8 @@ exports.getOptionById = async (id) => {
     return data;
 };
 
-exports.createOption = async (option) => {
-    const existingOption = await optionRepo.getOptionByName(option.name);
+exports.createOption = async (payload) => {
+    const existingOption = await optionRepo.getOptionByName(payload.name);
 
     if (existingOption) {
         throw {
@@ -22,24 +22,24 @@ exports.createOption = async (option) => {
         };
     }
 
-    const data = await optionRepo.createOption(option);
+    const data = await optionRepo.createOption(payload);
 
     return data;
 };
 
-exports.updateOption = async (id, option) => {
+exports.updateOption = async (id, payload) => {
     await optionRepo.getOptionById(id);
 
-    const existingOption = await optionRepo.getOptionByName(option.name);
+    const existingOption = await optionRepo.getOptionByName(payload.name);
 
     if (existingOption && existingOption.id !== id) {
         throw {
             statusCode: 409,
-            message: `Option with name ${option.name} already exists`,
+            message: `Option with name ${payload.name} already exists`,
         };
     }
 
-    const data = await optionRepo.updateOption(id, option);
+    const data = await optionRepo.updateOption(id, payload);
 
     return data;
 };

@@ -1,6 +1,6 @@
 const carUsecase = require("../../usecases/car");
 
-exports.getAllCars = async (req, res) => {
+exports.getAllCars = async (req, res, next) => {
     try {
         const data = await carUsecase.getAllCars();
 
@@ -9,11 +9,11 @@ exports.getAllCars = async (req, res) => {
             data,
         });
     } catch (error) {
-        res.status(500).json(error);
+        next(error);
     }
 };
 
-exports.getCarById = async (req, res) => {
+exports.getCarById = async (req, res, next) => {
     try {
         const { id } = req.params;
         const data = await carUsecase.getCarById(id);
@@ -23,11 +23,41 @@ exports.getCarById = async (req, res) => {
             data,
         });
     } catch (error) {
-        res.status(500).json(error);
+        next(error);
     }
 };
 
-exports.createCar = async (req, res) => {
+exports.getAllCarOptions = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        console.log(id);
+
+        const data = await carUsecase.getAllCarOptions(id);
+
+        res.status(200).json({
+            message: "Car options retrieved successfully",
+            data,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getAllCarSpecs = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const data = await carUsecase.getAllCarSpecs(id);
+
+        res.status(200).json({
+            message: "Car specs retrieved successfully",
+            data,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.createCar = async (req, res, next) => {
     try {
         const data = await carUsecase.createCar(req.body);
 
@@ -36,11 +66,11 @@ exports.createCar = async (req, res) => {
             data,
         });
     } catch (error) {
-        res.status(500).json(error);
+        next(error);
     }
 };
 
-exports.updateCar = async (req, res) => {
+exports.updateCar = async (req, res, next) => {
     try {
         const { id } = req.params;
         const data = await carUsecase.updateCar(id, req.body);
@@ -50,17 +80,17 @@ exports.updateCar = async (req, res) => {
             data,
         });
     } catch (error) {
-        res.status(500).json(error);
+        next(error);
     }
 };
 
-exports.deleteCar = async (req, res) => {
+exports.deleteCar = async (req, res, next) => {
     try {
         const { id } = req.params;
         await carUsecase.deleteCar(id);
 
         res.status(200).json({ message: "Car deleted successfully" });
     } catch (error) {
-        res.status(500).json(error);
+        next(error);
     }
 };

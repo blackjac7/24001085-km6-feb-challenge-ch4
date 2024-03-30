@@ -12,8 +12,21 @@ exports.getCarById = async (id) => {
     return data;
 };
 
-exports.createCar = async (car) => {
-    const existingCar = await carRepo.getCarByPlate(car.plate);
+exports.getAllCarOptions = async (id) => {
+    console.log("id", id);
+    const data = await carRepo.getAllCarOptions(id);
+
+    return data;
+};
+
+exports.getAllCarSpecs = async (id) => {
+    const data = await carRepo.getAllCarSpecs(id);
+
+    return data;
+};
+
+exports.createCar = async (payload) => {
+    const existingCar = await carRepo.getCarByPlate(payload.plate);
     if (existingCar) {
         throw {
             statusCode: 400,
@@ -26,10 +39,10 @@ exports.createCar = async (car) => {
     return data;
 };
 
-exports.updateCar = async (id, car) => {
+exports.updateCar = async (id, payload) => {
     await carRepo.getCarById(id);
 
-    const existingCar = await carRepo.getCarByPlate(car.plate);
+    const existingCar = await carRepo.getCarByPlate(payload.plate);
     if (existingCar && existingCar.id !== id) {
         throw {
             statusCode: 400,

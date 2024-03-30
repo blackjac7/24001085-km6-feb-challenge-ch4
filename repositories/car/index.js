@@ -14,6 +14,46 @@ exports.getAllCars = async () => {
     return data;
 };
 
+exports.getAllCarOptions = async (id) => {
+    console.log("id", id);
+    const car = await Car.findByPk(id);
+    console.log(car);
+
+    if (!car) {
+        throw {
+            statusCode: 404,
+            message: `Car with id ${car_id} not found`,
+        };
+    }
+
+    const options = await car.getOptions();
+
+    if (!options || options.length === 0) {
+        throw { statusCode: 404, message: "No options found" };
+    }
+
+    return options;
+};
+
+exports.getAllCarSpecs = async (id) => {
+    const car = await Car.findByPk(id);
+
+    if (!car) {
+        throw {
+            statusCode: 404,
+            message: `Car with id ${car_id} not found`,
+        };
+    }
+
+    const specs = await car.getSpecs();
+
+    if (!specs || specs.length === 0) {
+        throw { statusCode: 404, message: "No specs found" };
+    }
+
+    return specs;
+};
+
 exports.getCarById = async (id) => {
     const opt = {
         include: ["options", "specs"],
@@ -38,19 +78,19 @@ exports.getCarByPlate = async (plate) => {
     return data;
 };
 
-exports.createCar = async (car) => {
-    const data = await Car.create(car);
+exports.createCar = async (payload) => {
+    const data = await Car.create(payload);
 
     return data;
 };
 
-exports.updateCar = async (id, car) => {
+exports.updateCar = async (id, payload) => {
     const opt = {
         where: { id },
         returning: true,
     };
 
-    const data = await Car.update(car, opt);
+    const data = await Car.update(payload, opt);
 
     return data[1][0];
 };

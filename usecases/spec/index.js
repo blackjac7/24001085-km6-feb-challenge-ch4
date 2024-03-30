@@ -12,34 +12,34 @@ exports.getSpecById = async (id) => {
     return data;
 };
 
-exports.createSpec = async (spec) => {
-    const existingSpec = await specRepo.getSpecByName(spec.name);
+exports.createSpec = async (payload) => {
+    const existingSpec = await specRepo.getSpecByName(payload.name);
 
     if (existingSpec) {
         throw {
             statusCode: 409,
-            message: `Spec with name ${spec.name} already exists`,
+            message: `Spec with name ${payload.name} already exists`,
         };
     }
 
-    const data = await specRepo.createSpec(spec);
+    const data = await specRepo.createSpec(payload);
 
     return data;
 };
 
-exports.updateSpec = async (id, spec) => {
+exports.updateSpec = async (id, payload) => {
     await specRepo.getSpecById(id);
 
-    const existingSpec = await specRepo.getSpecByName(spec.name);
+    const existingSpec = await specRepo.getSpecByName(payload.name);
 
     if (existingSpec && existingSpec.id !== id) {
         throw {
             statusCode: 409,
-            message: `Spec with name ${spec.name} already exists`,
+            message: `Spec with name ${payload.name} already exists`,
         };
     }
 
-    const data = await specRepo.updateSpec(id, spec);
+    const data = await specRepo.updateSpec(id, payload);
 
     return data;
 };

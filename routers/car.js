@@ -11,4 +11,8 @@ router
     .patch(carController.updateCar)
     .delete(carController.deleteCar);
 
+router.route("/:id/options").get(carController.getAllCarOptions);
+
+router.route("/:id/specs").get(carController.getAllCarSpecs);
+
 module.exports = router;
