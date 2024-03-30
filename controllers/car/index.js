@@ -59,7 +59,19 @@ exports.getAllCarSpecs = async (req, res, next) => {
 
 exports.createCar = async (req, res, next) => {
     try {
-        const data = await carUsecase.createCar(req.body);
+        let payload = req.body;
+        const { image } = req.files;
+
+        if (!payload) {
+            throw { statusCode: 400, message: "Invalid payload" };
+        }
+
+        payload = {
+            ...payload,
+            image,
+        };
+
+        const data = await carUsecase.createCar(payload);
 
         res.status(201).json({
             message: "Car created successfully",

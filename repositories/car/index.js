@@ -1,9 +1,12 @@
+const crypto = require("crypto");
+const path = require("path");
 const { Car } = require("../../models");
 const {
     getFromCache,
     saveToCache,
     removeFromCache,
 } = require("../../helpers/redis");
+const { uploader } = require("../../helpers/cloudinary");
 
 exports.getAllCars = async () => {
     const opt = {
@@ -91,6 +94,17 @@ exports.getCarByPlate = async (plate) => {
 };
 
 exports.createCar = async (payload) => {
+    if (payload.image) {
+        const { image } = payload;
+
+        image.publicId = crypto.randomBytes(16).toString("hex");
+
+        image.name = `${image.publicId}${path.parse(image.name).ext}`;
+
+        const imageUpload = await uploader(image);
+        payload.image = imageUpload.secure_url;
+    }
+
     const data = await Car.create(payload);
 
     const key = `car:${data.id}`;
