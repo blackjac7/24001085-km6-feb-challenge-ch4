@@ -15,7 +15,12 @@ exports.getAllSpecs = async (req, res, next) => {
 
 exports.getSpecById = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const id = +req.params.id;
+
+        if (isNaN(id)) {
+            return res.status(400).json({ message: "Invalid id" });
+        }
+
         const data = await specUsecase.getSpecById(id);
 
         res.status(200).json({
@@ -29,7 +34,17 @@ exports.getSpecById = async (req, res, next) => {
 
 exports.createSpec = async (req, res, next) => {
     try {
-        const data = await specUsecase.createSpec(req.body);
+        const payload = req.body;
+
+        if (!payload) {
+            return res.status(400).json({ message: "Invalid payload" });
+        }
+
+        if (!payload.name) {
+            return res.status(400).json({ message: "Name are required" });
+        }
+
+        const data = await specUsecase.createSpec(payload);
 
         res.status(201).json({
             message: "Spec created successfully",
@@ -42,8 +57,22 @@ exports.createSpec = async (req, res, next) => {
 
 exports.updateSpec = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const data = await specUsecase.updateSpec(id, req.body);
+        const id = +req.params.id;
+        const payload = req.body;
+
+        if (isNaN(id)) {
+            return res.status(400).json({ message: "Invalid id" });
+        }
+
+        if (!payload) {
+            return res.status(400).json({ message: "Invalid payload" });
+        }
+
+        if (!payload.name) {
+            return res.status(400).json({ message: "Name are required" });
+        }
+
+        const data = await specUsecase.updateSpec(id, payload);
 
         res.status(200).json({
             message: "Spec updated successfully",
@@ -56,7 +85,12 @@ exports.updateSpec = async (req, res, next) => {
 
 exports.deleteSpec = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const id = +req.params.id;
+
+        if (isNaN(id)) {
+            return res.status(400).json({ message: "Invalid id" });
+        }
+
         await specUsecase.deleteSpec(id);
 
         res.status(200).json({

@@ -18,7 +18,7 @@ exports.createOption = async (payload) => {
     if (existingOption) {
         throw {
             statusCode: 409,
-            message: `Option with name ${option.name} already exists`,
+            message: `Option with name ${payload.name} already exists`,
         };
     }
 
